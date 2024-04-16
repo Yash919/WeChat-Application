@@ -24,6 +24,15 @@ function connect(){
                 $("#active-sessions").text(count.body);
             });
 
+            // Subscribe for handling download events
+            stompClient.subscribe("/topic/download-event", function(downloadEvent) {
+                var username = JSON.parse(downloadEvent.body).username;
+                if(username !== localStorage.getItem("name")) {
+                // show alert only if username doesn't match the current user.
+                alert(username + " has downloaded the chat. 👀😏")
+                }
+            });
+
             // subscribe for deleting the message
             stompClient.subscribe("/topic/delete-message", function(messageId) {
                         // Extract the messageId from the message body
@@ -206,6 +215,8 @@ $(document).ready(e=>{
     // Event listener for the download button
     $("#download").click(() => {
         downloadChatPage();
+        // Send a message to the backend indicating the download
+        stompClient.send("/app/download", {}, localStorage.getItem("name"));
     });
 
     // Enter Button trigger for login via name

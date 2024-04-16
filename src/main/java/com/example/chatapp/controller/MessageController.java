@@ -1,5 +1,6 @@
 package com.example.chatapp.controller;
 
+import com.example.chatapp.entity.DownloadEvent;
 import com.example.chatapp.entity.Message;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,15 @@ public class MessageController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @MessageMapping("/download")
+    public void downloadChat(String username){
+        // Download Event Message
+        DownloadEvent downloadEvent = new DownloadEvent(username);
+
+        // Broadcast the download event to all clients
+        messagingTemplate.convertAndSend("/topic/download-event",downloadEvent);
     }
 }
 
