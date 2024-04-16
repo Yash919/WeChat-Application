@@ -139,17 +139,6 @@ function generateChatPageHTML() {
     // Create a new HTML document
     var chatPageHTML = document.implementation.createHTMLDocument("Chat Page");
 
-    // Add the necessary CSS links
-    var bootstrapCSS = document.createElement("link");
-    bootstrapCSS.rel = "stylesheet";
-    bootstrapCSS.href = "/webjars/bootstrap/css/bootstrap.min.css";
-    chatPageHTML.head.appendChild(bootstrapCSS);
-
-    var customCSS = document.createElement("link");
-    customCSS.rel = "stylesheet";
-    customCSS.href = "/style.css";
-    chatPageHTML.head.appendChild(customCSS);
-
     // Create a div element for the chat room content
     var chatRoomDiv = document.createElement("div");
     chatRoomDiv.innerHTML = $("#chat-room").html();
