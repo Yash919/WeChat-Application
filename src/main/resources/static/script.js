@@ -71,10 +71,10 @@ function showMessage(message){
         var timeString = timestamp.toLocaleTimeString(undefined,format);
 
         // Edit Button functionality
-        var editButton=message.name === localStorage.getItem("name") ? `<button class="btn btn-primary btn-sm" onclick="editMessage('${message.id}')">Edit</button>` : '';
+        var editButton=message.name === localStorage.getItem("name") ? `<button class="btn btn-primary btn-sm edit-button" onclick="editMessage('${message.id}')">Edit</button>` : '';
 
         // Delete Button functionality
-        var deleteButton=message.name === localStorage.getItem("name") ? `<button class="btn btn-danger btn-sm" onclick="deleteMessage('${message.id}')">Delete</button>` : '';
+        var deleteButton=message.name === localStorage.getItem("name") ? `<button class="btn btn-danger btn-sm delete-button" onclick="deleteMessage('${message.id}')">Delete</button>` : '';
 
         var messageHtml = `
                 <tr id="${message.id}" style = "display:flex;gap:55px">
@@ -134,6 +134,78 @@ function generateUniqueId(){
     return Date.now() + Math.random().toString(36).substring(2);
 }
 
+// Function to generate HTML content of the chat page along with the conversation
+function generateChatPageHTML() {
+    // Create a new HTML document
+    var chatPageHTML = document.implementation.createHTMLDocument("Chat Page");
+
+    // Add the necessary CSS links
+    var bootstrapCSS = document.createElement("link");
+    bootstrapCSS.rel = "stylesheet";
+    bootstrapCSS.href = "/webjars/bootstrap/css/bootstrap.min.css";
+    chatPageHTML.head.appendChild(bootstrapCSS);
+
+    var customCSS = document.createElement("link");
+    customCSS.rel = "stylesheet";
+    customCSS.href = "/style.css";
+    chatPageHTML.head.appendChild(customCSS);
+
+    // Create a div element for the chat room content
+    var chatRoomDiv = document.createElement("div");
+    chatRoomDiv.innerHTML = $("#chat-room").html();
+
+    // Remove Active-User
+    chatRoomDiv.querySelector("#session-count").remove();
+
+    // Remove message field
+    chatRoomDiv.querySelector("#message-value").remove();
+
+    // Remove download button
+    chatRoomDiv.querySelector("#download").remove();
+
+    // Remove edit message button and delete button
+    chatRoomDiv.querySelectorAll(".edit-button, .delete-button").forEach(function(button) {
+            button.remove();
+        });
+
+    // Remove send message button and logout button
+    chatRoomDiv.querySelector("#send").remove();
+    chatRoomDiv.querySelector("#logout").remove();
+
+    // Add necessary styling to the chat room div to ensure CSS is applied correctly
+    chatRoomDiv.style.paddingBottom = "50px"; // Add padding to avoid overlapping with fixed button
+
+    // Append the modified chat room content to the body
+    chatPageHTML.body.appendChild(chatRoomDiv);
+
+    // Return the HTML content
+    return chatPageHTML.documentElement.outerHTML;
+}
+
+// Function to trigger the download
+function downloadChatPage() {
+    // Generate the HTML content of the chat page
+    var chatPageHTML = generateChatPageHTML();
+
+    // Create a Blob object containing the HTML content
+    var blob = new Blob([chatPageHTML], { type: "text/html" });
+
+    // Create a temporary <a> element to trigger the download
+    var a = document.createElement("a");
+    a.href = window.URL.createObjectURL(blob);
+
+    // Set the filename for the downloaded file
+    a.download = "chat_page.html";
+
+    // Append the <a> element to the document body and trigger the download
+    document.body.appendChild(a);
+    a.click();
+
+    // Remove the <a> element from the document body
+    document.body.removeChild(a);
+}
+
+
 
 $(document).ready(e=>{
 
@@ -141,6 +213,11 @@ $(document).ready(e=>{
     $("#login").click(()=>{
         loginuser();
     })
+
+    // Event listener for the download button
+    $("#download").click(() => {
+        downloadChatPage();
+    });
 
     // Enter Button trigger for login via name
     $("#name-value").keypress((e)=>{

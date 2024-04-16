@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Untracked File .DS_Store ###
+.DS_Store
